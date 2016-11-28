@@ -51,6 +51,7 @@ class CourseOverview(TimeStampedModel):
     version = IntegerField()
 
     # Course identification
+    course_type = models.CharField(max_length=10, null=True)
     id = CourseKeyField(db_index=True, primary_key=True, max_length=255)
     _location = UsageKeyField(max_length=255)
     org = TextField(max_length=255, default='outdated_entry')

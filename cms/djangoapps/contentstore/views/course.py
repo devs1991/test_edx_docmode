@@ -720,6 +720,7 @@ def _create_or_rerun_course(request):
         raise PermissionDenied()
 
     try:
+        
         org = request.json.get('org')
         course = request.json.get('number', request.json.get('course'))
         display_name = request.json.get('display_name')

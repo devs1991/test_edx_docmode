@@ -53,7 +53,9 @@ from student.models import (
     CourseEnrollmentAllowed, UserStanding, LoginFailures,
     create_comments_service_user, PasswordHistory, UserSignupSource,
     DashboardConfiguration, LinkedInAddToProfileConfiguration, ManualEnrollmentAudit, ALLOWEDTOENROLL_TO_ENROLLED)
+
 from student.forms import AccountCreationForm, PasswordResetFormNoActive, get_registration_extension_form
+from lms.djangoapps.reg_form.forms import regextrafields
 from lms.djangoapps.commerce.utils import EcommerceService  # pylint: disable=import-error
 from lms.djangoapps.verify_student.models import SoftwareSecurePhotoVerification  # pylint: disable=import-error
 from certificates.models import CertificateStatuses, certificate_status_for_student
@@ -1550,13 +1552,18 @@ def _do_create_account(form, custom_form=None):
         "name", "level_of_education", "gender", "mailing_address", "city", "country", "goals",
         "year_of_birth"
     ]
+    
+    
     profile = UserProfile(
         user=user,
         **{key: form.cleaned_data.get(key) for key in profile_fields}
     )
+    
+
     extended_profile = form.cleaned_extended_profile
     if extended_profile:
         profile.meta = json.dumps(extended_profile)
+
     try:
         profile.save()
     except Exception:  # pylint: disable=broad-except

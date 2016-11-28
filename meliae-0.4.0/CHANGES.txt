@@ -1,0 +1,170 @@
+##############
+Meliae Changes
+##############
+
+.. contents:: List of Releases
+   :depth: 1
+
+Meliae 0.4
+##########
+
+:0.4: 2011-07-08
+
+* We now only compile against Cython. I've finally hit some issues that
+  I don't want to work around. Namely sizeof(Class) doesn't work under
+  even pyrex 0.9.9. (John Arbash Meinel)
+
+* Duplicate parent entries are filtered out. (eg the intern dict refers
+  to the same string 2x, you'll see 1 parent ref in the child, not 2.)
+  (John Arbash Meinel)
+
+* We now default to limiting the maximum length of the parents list
+  (default 100). I had some dumps where a single object was referenced
+  50k times. Anything over about 10 is at the point where you won't
+  really walk them. This can be disabled with ``load(max_parents=-1)``.
+  The main win is lowering memory consumption. A 50k parent list takes
+  200kB by itself (on 32-bit).  (John Arbash Meinel)
+
+* Fix a PyInt memory leak. We were calling __sizeof__ which returns an
+  PyInt and not DECREFing it. (John Arbash Meinel)
+
+* Initial support for overriding ``__sizeof__`` definitions. It turns
+  out that object has a basic definition, so all new style classes
+  inherit it. We now provide ``meliae.scanner.add_special_size``, which
+  takes a type name and some callbacks to determine the size of an
+  object. This lets you register them without importing the module.
+
+* Small updates to fix the test suite under python2.7 and 64-bit
+  architectures. PyString changed size in 2.7, and we weren't
+  accounting for alignment effects on 64-bit machines.
+  (John Arbash Meinel, Jelmer Vernooij, #739310)
+
+* ``run_tests.py`` exits nonzero if a test fails.
+  (Jelmer Vernooij, #740109)
+
+* Add a MANIFEST.in file, to allow ``python setup.py sdist`` to
+  properly see the .c and .h files it needs to include.
+  (Chris Adams, #735284)
+
+
+Meliae 0.3
+##########
+
+:0.3: 2010-08-02
+
+The main update is the ability to do more queries on a subset of
+the object graph. ``om.summarize(starting_at, excluding=[address])``
+lets you find out what is more directly "owned" by a given object.
+
+* Add ``__sizeof__`` members to a lot of the core classes (IntSet,
+  etc.) (John Arbash Meinel)
+
+* ``ObjectManager.compute_total_size()`` now only computes the size of
+  a single object, rather than all objects. All objects took too long
+  to be useful anyway, better to make it easier to use the useful api.
+  (John Arbash Meinel)
+
+* ``obj.iter_recursive_refs()`` can now be used to find all objects
+  referenced from this object (including obj). It can also take an
+  iterable of object addresses to exclude. Which makes it easy to ask,
+  "What objects are accessible from X that aren't accessible from Y?"
+  (John Arbash Meinel)
+
+* ``ObjectManager.summarize()`` can now take an object and an exclusion
+  list, and summarize the referenced objects. This can be quite useful
+  when you want to look at just a subset of the graph. The syntax is
+  ``ObjectManager.summarize(obj, [not_address1, not_address2])``.
+  (John Arbash Meinel)
+
+* ``obj.all()`` and ``obj.compute_total_size()`` helpers. These let you
+  get the set of referenced objects matching the type (like
+  ``om.get_all()``). But they *also* allow you to pass an exclusion
+  list, so you can only get things reachable from here and not
+  reachable from there. (John Arbash Meinel)
+
+
+Meliae 0.2.1
+############
+
+:0.2.1: 2010-07-20
+
+* When dumping a ``PyFrame`` look at the function object for
+  ``co_name``, so you don't have to wander through the references to
+  get their yourself. (Andrew Bennetts)
+
+* Fixes for the simple regex parser (w/o simplejson). However,
+  simplejson is still recommended, because it is both faster and more
+  accurate (decodes unicode escapes, etc). (John Arbash Meinel)
+
+* ``loader.load()`` now defaults to computing parents and collapsing
+  instance dicts. It does mean that loading will be a bit slower, and
+  consume more memory, but it is almost always what you need to do
+  first anyway. (John Arbash Meinel)
+
+
+Meliae 0.2.1rc1
+###############
+
+:0.2.1rc1: 2010-06-30
+
+* Avoid calling ``PyType_Type.tp_traverse`` when the argument is not a
+  heap-class. There is an assert that gets tripped if you are running a
+  debug build (or something to do with how Fedora builds its python).
+  (John Arbash Meinel, #586122)
+
+* Flush the file handle before exiting. We were doing it at the Python
+  layer, but that might not translate into the ``FILE*`` object.
+  (John Arbash Meinel, #428165)
+
+* Handle some issues when using Pyrex 0.9.8.4. It was treating
+  ``<unsigned long>`` as casting the object pointer, not as a Python
+  level "extract an integer". However, assignment to an ``cdef unsigned
+  long`` does the right thing. (John Arbash Meinel)
+
+* Tweak some memory performance issues (Gary Poster, #581918)
+
+
+Meliae 0.2.0
+############
+
+:0.2.0: 2010-01-08
+
+A fairly major reworking of the internals, provides significant memory
+savings and easier navigation of the object graph.
+
+
+New Features
+************
+
+* The loader internals have been rewritten significantly. Instead of
+  storing a bunch of objects in a regular python dict, they are now
+  stored in a custom Pyrex collection, and proxy objects are created on
+  demand.  This means significantly improved memory usage. (roughly
+  2:1). (John Arbash Meinel)
+
+* The internals change also changes the interface a bit. When viewing
+  an object, a shorter display is given. One can use ``obj[offset]`` to
+  get the object at that reference, rather than the reference itself.
+  (so fewer indirections through the ObjManager). (John Arbash Meinel)
+
+* Now supports the ``__sizeof__`` interface introduced in python 2.6.
+  This allows a class (especially extension classes) to inform
+  Meliae/Python how many bytes it is consuming in memory.
+  (John Arbash Meinel)
+
+* Memory objects now use a ``.children`` and ``.parents`` notation,
+  rather than ``.ref_list`` and ``.referrers``. For one, this makes it
+  clearer as 'referred to' and 'referred from' is a bit tricky. We also
+  now have ``.c`` and ``.p`` which return a list of Memory objects,
+  rather than just a list of addresses. This makes it very quick to
+  move around. Especially with ``.refs_as_dict`` and other such
+  niceties. (John Arbash Meinel)
+
+
+Bug Fixes
+*********
+
+* Some 
+
+
+.. vim: tw=71 ft=rst

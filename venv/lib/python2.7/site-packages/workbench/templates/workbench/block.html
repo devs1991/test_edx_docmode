@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load url from future %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css"
+              href="{% static 'workbench/css/workbench.css' %}">
+        <script>
+            // TODO: This should be handled more modularly.
+            studentId = '{{student_id}}';
+            handlerBaseUrl = '{% url "workbench_index" %}handler/';
+            asideBaseUrl = '{% url "workbench_index" %}aside_handler/';
+        </script>
+        {{head_html|safe}}
+    </head>
+    <body class="view-workbench">
+        <div class="wrapper-workbench">
+            <div class="workbench">
+                <header class="banner" role="banner">
+                    <h1 class="title" >XBlock: {{scenario.description}}</h1>
+                </header>
+
+                <section class="main">
+                    <div class="preview student_view">
+                        {{body|safe}}
+                    </div>
+
+                    {{foot_html|safe}}
+                </section>
+
+                <section class="debug">
+                    <div class="data">
+                        <span class="label">Database</span>
+                        <div align="left" style="float:left">
+                            <a href="{% url "admin:workbench_xblockstate_changelist" %}?scenario={{scenario.description|slugify}}"
+                            >Scenario State</a>
+                        </div>
+                        <div align="right">
+                            <form method="POST" action="{% url "workbench.views.reset_state" %}">
+                                <input type="submit" value="Reset State"/>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="data">
+                        <span class="label">Block</span>
+                        {{block}}
+                    </div>
+                    <div class="data">
+                        <span class="label">Scenario</span>
+                        <pre>{{scenario.xml}}</pre>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </body>
+</html>

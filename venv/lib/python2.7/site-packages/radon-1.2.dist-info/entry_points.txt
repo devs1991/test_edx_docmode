@@ -1,0 +1,3 @@
+[console_scripts]
+radon = radon:main
+

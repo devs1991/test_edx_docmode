@@ -1,0 +1,62 @@
+## mako
+<%namespace name='static' file='/static_content.html'/>
+<%!
+ from django.utils.translation import ugettext as _
+ from django.core.urlresolvers import reverse
+ %>
+<%page args="tab_list, active_page, default_tab, tab_image, type" />
+
+<%
+def url_class(is_active):
+  if is_active:
+    return "active"
+  return ""
+%>
+% for tab in tab_list:
+  <%
+    tab_is_active = tab.tab_id in (active_page, default_tab)
+    tab_class = url_class(tab_is_active)
+  %>
+  <li>
+  %if type == '2':
+    %if tab.name == 'Course':
+      %if type == '2':
+        <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+        <h4>Webinar</h4>
+      %elif type == '1':
+        <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+        <h4>Course</h4>
+      %endif
+    %else:
+      %if tab.name == 'Home':
+        <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+        <h4>Home</h4>
+      %endif
+    %endif
+  %else:
+    <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+    ${_(tab.name) | h}
+  %endif
+  % if tab_is_active:
+      <span class="sr">, current location</span>
+  %endif
+  % if tab_image:
+      ## Translators: 'needs attention' is an alternative string for the
+      ## notification image that indicates the tab "needs attention".
+      <img src="${tab_image}" alt="${_('needs attention')}" />
+  %endif
+  </a>
+  </li>
+% endfor
+%if tab.name == 'Course':
+    %if type == '2':
+      <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+      <h4>Webinar</h4>
+    %elif type == '1':
+      <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+      <h4>Course</h4>
+    %endif
+  %else:
+    <a href="${tab.link_func(course, reverse) | h}" class="${tab_class}">
+    ${_(tab.name) | h}
+  %endif

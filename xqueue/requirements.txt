@@ -1,0 +1,17 @@
+django>=1.8,<1.9
+MySQL-python==1.2.5
+argparse==1.2.1
+boto==2.6.0
+coverage==3.6b1
+django-nose==1.4.1
+dogstatsd-python==0.2
+gunicorn==0.16.1
+newrelic==2.46.0.37
+nose==1.2.1
+nosexcover==1.0.7
+path.py==2.4.1
+-e /home/docmode/edx-20160414-2/apps/edx/edx-platform/pika
+python-termstyle==0.1.10
+rednose==0.3
+requests==0.14.2
+wsgiref==0.1.2

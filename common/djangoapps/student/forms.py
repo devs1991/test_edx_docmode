@@ -152,6 +152,7 @@ class AccountCreationForm(forms.Form):
         }
     )
 
+
     def __init__(
             self,
             data=None,

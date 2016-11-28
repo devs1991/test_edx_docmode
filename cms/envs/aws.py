@@ -409,3 +409,5 @@ if FEATURES.get('CUSTOM_COURSES_EDX'):
 
 # Partner support link for CMS footer
 PARTNER_SUPPORT_EMAIL = ENV_TOKENS.get('PARTNER_SUPPORT_EMAIL', PARTNER_SUPPORT_EMAIL)
+##### DATA FOLDER FOR COURSES #####
+DATA_DIR = "/home/docmode/edx-20160414-2/apps/edx/edxapp/data"

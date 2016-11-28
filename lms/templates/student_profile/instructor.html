@@ -1,0 +1,97 @@
+<%page expression_filter="h"/>
+<%inherit file="/main.html" />
+<%namespace name='static' file='/static_content.html'/>
+<%!
+import json
+from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext as _
+from openedx.core.djangolib.js_utils import dump_js_escaped_json
+from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
+from student.models import UserProfile,CourseAccessRole
+from student_profile.views import course_det
+%>
+
+<%block name="pagetitle">${inst.first_name} ${inst.last_name}</%block>
+<%block name="bodyclass">view-profile</%block>
+
+<%
+	user = UserProfile.objects.get(user_id=inst.id)
+	username = inst.username
+	profile_image_url = get_profile_image_urls_for_user(inst)['medium']
+	courses = CourseAccessRole.objects.all().filter(user_id=inst.id)
+%>
+<div class="window-wrap" dir="ltr">
+	<p>
+		<div role="main" class="content-wrapper" id="content" tabindex="-1">
+    <div class="message-banner" aria-live="polite"></div>
+    <div class="wrapper-profile">
+        <div class="profile profile-self">
+            <div class="wrapper-profile-sections account-settings-container">
+                <div class="wrapper-profile-section-one">
+                    <div class="profile-image-field">
+                        <div class="u-field u-field-image u-field-profile_image">
+                            <div class="image-wrapper">
+                                <img class="user-image-frame" src="${profile_image_url}" alt="${_('Profile image for {username}').format(username=username)}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-section-one-fields">
+                        <div class="u-field u-field-readonly u-field-username">
+                            <span class="sr" for="u-field-value-username">Username</span>
+                            <span class="u-field-value" id="u-field-value-username" aria-describedby="u-field-message-username">${inst.first_name}${inst.last_name}</span>
+                            <span class="u-field-message" id="u-field-message-username">
+                            <span class="u-field-message-notification" aria-live="polite"></span>
+                            <span class="u-field-message-help" id="u-field-help-message-username"> </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-loading-error is-hidden">
+                    <i class="fa fa-exclamation-triangle message-error" aria-hidden="true"></i>
+                    <span class="copy">An error occurred. Try loading the page again.</span>
+                </div>
+                <div>
+                    <nav class="page-content-nav" aria-label="Profile" style="display: none;"><button class="nav-item tab is-active" data-url="about_me" data-index="0" is-active="false" aria-expanded="true" aria-controls="tabpanel-about_me">About Me</button></nav>
+                    <div class="page-content-main">
+                        <div class="tabs">
+                            <div class="tabpanel" id="tabpanel-about_me" aria-expanded="true">
+                                <div class="sr-is-focusable tabpanel-about_me" tabindex="-1"></div>
+                                <div class="wrapper-profile-section-two">
+                                    <div class="profile-section-two-fields">
+                                        <div class="field-container">
+                                            <div class="u-field u-field-textarea u-field-bio editable-toggle mode-display">
+                                                <div class="wrapper-u-field">
+                                                    <div class="u-field-value" id="u-field-value-bio">
+                                                            <p class="sr">About me</p>
+                                                            <span class="u-field-value-readonly" aria-hidden="false" aria-describedby="u-field-placeholder-value-bio">${user.bio}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+		</div>
+	</p>
+	<p>
+		<section class="find-courses">
+   			<section class="courses-container">
+     			<div class="courses${'' if course_discovery_enabled else ' no-course-discovery'}" role="region" aria-label="${_('List of Courses')}">
+       				<ul class="courses-listing">
+         				%for course in courses:
+         					<li class="courses-listing-item">
+           						<%include file="instructor_course.html" args="course=course_det(course.course_id)" />
+         					</li>
+         				%endfor
+       				</ul>
+     			</div>
+   			</section>
+ 		</section>
+	</p>
+</div>

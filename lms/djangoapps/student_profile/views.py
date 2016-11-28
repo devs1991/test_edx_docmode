@@ -16,7 +16,10 @@ from openedx.core.djangoapps.user_api.accounts.api import get_account_settings
 from openedx.core.djangoapps.user_api.errors import UserNotFound, UserNotAuthorized
 from openedx.core.djangoapps.user_api.preferences.api import get_user_preferences
 from student.models import User
-
+from lms.djangoapps.reg_form.models import extrafields
+from opaque_keys.edx.keys import CourseKey, UsageKey
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 @login_required
 @require_http_methods(['GET'])
@@ -45,6 +48,45 @@ def learner_profile(request, username):
     except (UserNotAuthorized, UserNotFound, ObjectDoesNotExist):
         raise Http404
 
+def instructor(request, username):
+    """Render the profile page for the specified username.
+
+    Args:
+        request (HttpRequest)
+        username (str): username of user whose profile is requested.
+
+    Returns:
+        HttpResponse: 200 if the page was sent successfully
+        HttpResponse: 302 if not logged in (redirect to login page)
+        HttpResponse: 405 if using an unsupported HTTP method
+    Raises:
+        Http404: 404 if the specified user is not authorized or does not exist
+
+    Example usage:
+        GET /account/profile
+    """
+    instructor = User.objects.get(username=username)
+    context = {
+        'inst': instructor,
+    }
+
+    try:
+        return render_to_response(
+            'student_profile/instructor.html',
+            context
+        )
+    except (UserNotFound):
+        raise Http404
+
+def course_det(courseId):
+
+   course_key = CourseKey.from_string(courseId)
+
+   from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+
+   course_details = CourseOverview.objects.all().filter(id=course_key).values()
+
+   return course_details
 
 def learner_profile_context(request, profile_username, user_is_staff):
     """Context for the learner profile page.

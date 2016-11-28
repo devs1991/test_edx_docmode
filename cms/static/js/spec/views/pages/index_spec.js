@@ -4,11 +4,12 @@ define(["jquery", "common/js/spec_helpers/ajax_helpers", "common/js/spec_helpers
         describe("Course listing page", function () {
             var mockIndexPageHTML = readFixtures('mock/mock-index-page.underscore');
 
-            var fillInFields = function (org, number, run, name) {
+            var fillInFields = function (org, number, run, name, ctype) {
                 $('.new-course-org').val(org);
                 $('.new-course-number').val(number);
                 $('.new-course-run').val(run);
                 $('.new-course-name').val(name);
+                $('#new-course-name').val(ctype);
             };
 
             var fillInLibraryFields = function(org, number, name) {

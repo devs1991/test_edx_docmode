@@ -21,4 +21,4 @@ def django_cmd(sys, settings, *args):
     # Maintain backwards compatibility with manage.py,
     # which calls "studio" "cms"
     sys = 'cms' if sys == 'studio' else sys
-    return cmd("python manage.py", sys, "--settings={}".format(settings), *args)
+    return cmd("/home/docmode/edx-20160414-2/apps/edx/edx-platform/venv/bin/python manage.py", sys, "--settings={}".format(settings), *args)

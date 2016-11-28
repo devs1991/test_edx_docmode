@@ -1,0 +1,31 @@
+<%inherit file="/main.html" />
+<%namespace name='static' file='../static_content.html'/>
+<%!
+from django.utils.translation import ugettext as _
+from django.core.urlresolvers import reverse
+from instructorbio.views import course_det
+%>
+
+
+<%block name="pagetitle">${fname}</%block>
+
+<section class="course-info">
+
+  <section class="container">
+    <section class="details">
+      <div class="inner-wrapper">
+        <h1>
+          ${fname}${lname}
+        </h1>
+        <p>
+          ${user}
+        </p>
+      </div>
+    </section>
+
+    <section class="course-sidebar">
+
+    </section>
+
+  </section>
+</section>

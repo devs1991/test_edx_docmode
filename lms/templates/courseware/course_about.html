@@ -2,7 +2,7 @@
 <%!
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from courseware.courses import get_course_about_section
+from courseware.courses import get_course_about_section, get_course_ctype
 from django.conf import settings
 from edxmako.shortcuts import marketing_link
 from openedx.core.lib.courses import course_image_url
@@ -118,17 +118,25 @@ from openedx.core.lib.courses import course_image_url
             <a href="#">${course.display_org_with_default | h}</a>
           </h1>
         </div>
-
+        <%
+        type = get_course_ctype(course.id)
+        %>
         <div class="main-cta">
         %if user.is_authenticated() and registered:
-          %if show_courseware_link:
-            <a href="${course_target}">
+          %if type == '2':
+            <% name = 'Webinar' %>
+            <a href="courseware">
+          %else:
+            <% name = 'Course' %>
+            %if show_courseware_link:
+              <a href="${course_target}">
+            %endif
           %endif
 
-          <span class="register disabled">${_("You are enrolled in this course")}</span>
+          <span class="register disabled">${_("You are enrolled in this")} ${name}</span>
 
           %if show_courseware_link:
-            <strong>${_("View Course")}</strong>
+              <strong>${_("View ")}${name}</strong>
             </a>
           %endif
 

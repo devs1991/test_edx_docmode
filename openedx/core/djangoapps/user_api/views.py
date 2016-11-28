@@ -264,6 +264,7 @@ class RegistrationView(APIView):
                     restrictions=restrictions,
                     options=getattr(field, 'choices', None), error_messages=field.error_messages,
                     include_default_option=field_options.get('include_default_option'),
+                    widget=getattr(field, 'widget', None),
                 )
 
         # Extra fields configured in Django settings

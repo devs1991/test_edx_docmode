@@ -90,7 +90,18 @@ from student.models import UserProfile
       <input id="username" type="text" name="username" value="${username}" placeholder="${_('example: JaneDoe')}" required aria-required="true" aria-describedby="username-tip"/>
       <span class="tip tip-input" id="username-tip">${_('Will be shown in any discussions or forums you participate in')} <strong>(${_('cannot be changed later')})</strong></span>
     </li>
-
+    <li class="field required text" id="field-username">
+      <label for="reg_num">${_('Reg Num')}</label>
+      <input id="reg_num" type="text" name="reg_num" value="" placeholder="${_('MH-124')}" required />
+    </li>
+    <li class="field required text" id="field-specz">
+      <label for="specz">${_('Specz')}</label>
+      <input id="specz" type="text" name="specz" value="" required aria-required="true" />
+    </li>
+    <li class="field required text" id="field-specz">
+      <label for="specialization">${_('Specialization')}</label>
+      <input id="specialization" type="text" name="specialization" value="" required aria-required="true" />
+    </li>
     % if third_party_auth.is_enabled() and running_pipeline:
 
     <li class="is-disabled field optional password" id="field-password" hidden>
@@ -106,6 +117,7 @@ from student.models import UserProfile
     </li>
 
     % endif
+    
   </ol>
 
   % else:

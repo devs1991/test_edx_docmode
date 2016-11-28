@@ -1,0 +1,10 @@
+django==1.8.9
+pip==7.1.2
+djangorestframework==3.1.3
+versiontools
+pbr>=0.5.21,<1.0
+setuptools_hg
+PyContracts
+fs==0.4
+pyandoc
+django-statici18n==1.1.5

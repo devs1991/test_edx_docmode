@@ -485,3 +485,7 @@ def get_problems_in_section(section):
                     problem_descriptors[unicode(component.location)] = component
 
     return problem_descriptors
+
+def get_course_ctype(course_key):
+    ctype = CourseOverview.objects.get(id=course_key)
+    return ctype.course_type

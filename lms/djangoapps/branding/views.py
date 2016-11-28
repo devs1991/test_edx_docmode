@@ -114,6 +114,29 @@ def courses(request):
     #  marketing is enabled or the courses are not browsable
     return courseware.views.courses(request)
 
+@ensure_csrf_cookie
+@cache_if_anonymous()
+def organizations(request):
+    """
+    Render the "find courses" page. If the marketing site is enabled, redirect
+    to that. Otherwise, if subdomain branding is on, this is the university
+    profile page. Otherwise, it's the edX courseware.views.courses page
+    """
+    enable_mktg_site = microsite.get_value(
+        'ENABLE_MKTG_SITE',
+        settings.FEATURES.get('ENABLE_MKTG_SITE', False)
+    )
+
+    if enable_mktg_site:
+        return redirect(marketing_link('ASSOCIATIONS'), permanent=True)
+
+    if not settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
+        raise Http404
+
+    #  we do not expect this case to be reached in cases where
+    #  marketing is enabled or the courses are not browsable
+    return courseware.views.organizations(request)
+
 
 def _footer_static_url(request, name):
     """Construct an absolute URL to a static asset. """

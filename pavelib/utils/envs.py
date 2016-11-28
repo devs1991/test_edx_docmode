@@ -169,7 +169,7 @@ class Env(object):
 
         # Find the env JSON file
         if self.SERVICE_VARIANT:
-            env_path = self.REPO_ROOT.parent / "{service}.env.json".format(service=self.SERVICE_VARIANT)
+            env_path = self.REPO_ROOT.parent / "conf/{service}.env.json".format(service=self.SERVICE_VARIANT)
         else:
             env_path = path("env.json").abspath()
 

@@ -3,6 +3,7 @@ define(["domReady", "jquery", "underscore", "js/utils/cancel_on_escape", "js/vie
     function (domReady, $, _, CancelOnEscape, CreateCourseUtilsFactory, CreateLibraryUtilsFactory, ViewUtils) {
         "use strict";
         var CreateCourseUtils = new CreateCourseUtilsFactory({
+            ctype: '.new-course-ctype',
             name: '.new-course-name',
             org: '.new-course-org',
             number: '.new-course-number',
@@ -40,6 +41,7 @@ define(["domReady", "jquery", "underscore", "js/utils/cancel_on_escape", "js/vie
         });
 
         var saveNewCourse = function (e) {
+            alert('course');
             e.preventDefault();
 
             if (CreateCourseUtils.hasInvalidRequiredFields()) {
@@ -47,12 +49,14 @@ define(["domReady", "jquery", "underscore", "js/utils/cancel_on_escape", "js/vie
             }
 
             var $newCourseForm = $(this).closest('#create-course-form');
+            var ctype = $newCourseForm.find('.new-course-ctype').val();
             var display_name = $newCourseForm.find('.new-course-name').val();
             var org = $newCourseForm.find('.new-course-org').val();
             var number = $newCourseForm.find('.new-course-number').val();
             var run = $newCourseForm.find('.new-course-run').val();
 
             var course_info = {
+                ctype: ctype,
                 org: org,
                 number: number,
                 display_name: display_name,
@@ -81,6 +85,7 @@ define(["domReady", "jquery", "underscore", "js/utils/cancel_on_escape", "js/vie
         };
 
         var addNewCourse = function (e) {
+            alert();
             e.preventDefault();
             $('.new-course-button').addClass('is-disabled').attr('aria-disabled', true);
             $('.new-course-save').addClass('is-disabled').attr('aria-disabled', true);

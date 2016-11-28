@@ -4,7 +4,6 @@ is used in user dashboard queries and other places where you need info like
 name, and start dates, but don't actually need to crawl into course content.
 """
 from django.contrib import admin
-
 from config_models.admin import ConfigurationModelAdmin
 from .models import CourseOverview, CourseOverviewImageConfig, CourseOverviewImageSet
 
@@ -24,6 +23,7 @@ class CourseOverviewAdmin(admin.ModelAdmin):
     purpose, and that's all the yak I have time to shave today.
     """
     list_display = [
+        'course_type',
         'id',
         'display_name',
         'version',

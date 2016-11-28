@@ -32,6 +32,56 @@
 % endfor
 </%block>
 
-<div class="section-bkg-wrapper">
+<div class="section-bkg-wrapper" >
     <div id="login-and-registration-container" class="login-register" />
 </div>
+<script type="text/javascript">
+
+    function setfunc() {
+        $("#register-user_type").on("change", function(event) { 
+            usertype(this);
+        } );
+        
+    }
+
+    function usertype(val){
+        if(val.value == 'u') {
+            document.getElementById('register-reg_num').disabled=true;
+            document.getElementById('register-reg_num').style.backgroundColor='#b58989';
+            document.getElementById('register-specialization').disabled=true;
+            document.getElementById('register-specialization').style.backgroundColor='#b58989';
+            document.getElementById('register-hcspecialization').disabled=true;
+            document.getElementById('register-hcspecialization').style.backgroundColor='#b58989';
+        } else if(val.value == 'hc') {
+            document.getElementById('register-reg_num').disabled=true;
+            document.getElementById('register-reg_num').style.backgroundColor='#b58989';
+            document.getElementById('register-specialization').disabled=true;
+            document.getElementById('register-specialization').style.backgroundColor='#b58989';
+            document.getElementById('register-hcspecialization').disabled=false;
+            document.getElementById('register-hcspecialization').style.backgroundColor='#fff';
+        } else {
+            document.getElementById('register-reg_num').disabled=false;
+            document.getElementById('register-reg_num').style.backgroundColor='#fff';
+            document.getElementById('register-specialization').disabled=false;
+            document.getElementById('register-specialization').style.backgroundColor='#fff';
+            document.getElementById('register-hcspecialization').disabled=true;
+            document.getElementById('register-hcspecialization').style.backgroundColor='#b58989';
+        }
+    }
+
+    function usertyped(val) {
+        $url = $('#register');
+        $.ajax({
+            type : 'POST',
+            url : $url.attr('action'),
+            dataType:'html',
+            data :{
+                usertype: val,
+            },
+            success : function(data) {
+                $('#register').replacewith('<h1>Hello</h1>');
+            }
+        });
+        return false;
+    }
+</script>

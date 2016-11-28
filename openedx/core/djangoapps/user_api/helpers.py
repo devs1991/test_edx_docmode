@@ -133,12 +133,13 @@ class FormDescription(object):
         forms.Textarea: "textarea",
         forms.BooleanField: "checkbox",
         forms.EmailField: "email",
+        forms.ModelChoiceField: "select",
     }
 
     OVERRIDE_FIELD_PROPERTIES = [
         "label", "type", "defaultValue", "placeholder",
         "instructions", "required", "restrictions",
-        "options"
+        "options","attrs","widget",
     ]
 
     def __init__(self, method, submit_url):
@@ -157,7 +158,7 @@ class FormDescription(object):
     def add_field(
             self, name, label=u"", field_type=u"text", default=u"",
             placeholder=u"", instructions=u"", required=True, restrictions=None,
-            options=None, include_default_option=False, error_messages=None,
+            options=None, include_default_option=False, error_messages=None,widget=None,
     ):
         """Add a field to the form description.
 
@@ -230,7 +231,7 @@ class FormDescription(object):
                     field_dict["options"].append({
                         "value": "",
                         "name": "--",
-                        "default": True
+                        "default": True,
                     })
 
                 field_dict["options"].extend([

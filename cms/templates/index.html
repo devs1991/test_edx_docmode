@@ -29,7 +29,7 @@ from openedx.core.djangolib.markup import Text, HTML
         <li class="nav-item">
           % if course_creator_status=='granted':
           <a href="#" class="button new-button new-course-button"><i class="icon fa fa-plus icon-inline"></i>
-              ${_("New Course")}</a>
+              ${_("New Course / Webinar")}</a>
           % elif course_creator_status=='disallowed_for_this_site' and settings.FEATURES.get('STUDIO_REQUEST_EMAIL',''):
           <a href="mailto:${settings.FEATURES.get('STUDIO_REQUEST_EMAIL','')}">${_("Email staff to create course")}</a>
           % endif
@@ -65,12 +65,20 @@ from openedx.core.djangolib.markup import Text, HTML
           </div>
 
           <div class="wrapper-form">
-            <h3 class="title">${_("Create a New Course")}</h3>
+            <h3 class="title">${_("Create a New Course / Webinar")}</h3>
 
             <fieldset>
               <legend class="sr">${_("Required Information to Create a New Course")}</legend>
 
               <ol class="list-input">
+                <li class="field text required" id="field-course-ctype">
+                  <label for="new-course-ctype">Course type</label>
+                  <input class="new-course-ctype" id="new-course-ctype" type="number" name="new-course-ctype" value="1" required 
+                  aria-describedby="tip-new-course-ctype tip-error-new-course-ctype"
+                  />
+                   <span class="tip" id="tip-new-course-ctype">${_("The course webinar differentiator. Default 1 for course and 2 for webinar")}</span>
+                  <span class="tip tip-error is-hiding" id="tip-error-new-course-ctype"></span>
+                </li>
                 <li class="field text required" id="field-course-name">
                   <label for="new-course-name">${_("Course Name")}</label>
                   ## Translators: This is an example name for a new course, seen when

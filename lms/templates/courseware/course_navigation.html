@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_user_partition
 from student.models import CourseEnrollment
+from courseware.courses import get_course_by_id, get_course_ctype
 %>
 <%page args="active_page=None" />
 
@@ -43,7 +44,9 @@ include_special_exams = settings.FEATURES.get('ENABLE_SPECIAL_EXAMS', False) and
             <ol class="preview-actions">
                 <li class="action-preview">
                     <form action="#" class="action-preview-form" method="post">
-                        <label for="action-preview-select" class="action-preview-label">${_("View this course as:")}</label>
+                        <label for="action-preview-select" class="action-preview-label">${_("View this course as:")}
+                        
+                        </label>
                         <select class="action-preview-select" id="action-preview-select" name="select">
                             <option value="staff" ${staff_selected}>${_("Staff")}</option>
                             <option value="student" ${student_selected}>${_("Student")}</option>
@@ -81,9 +84,10 @@ include_special_exams = settings.FEATURES.get('ENABLE_SPECIAL_EXAMS', False) and
      <%
       tab_list = get_course_tab_list(request, course)
       tabs_tmpl = static.get_template_path('/courseware/tabs.html')
+      type = get_course_ctype(course.id)
       %>
       <ol class="course-tabs">
-      <%include file="${tabs_tmpl}" args="tab_list=tab_list,active_page=active_page,default_tab=default_tab,tab_image=tab_image" />
+      <%include file="${tabs_tmpl}" args="tab_list=tab_list,active_page=active_page,default_tab=default_tab,tab_image=tab_image,type=type" />
       <%block name="extratabs" />
       </ol>
   </div>

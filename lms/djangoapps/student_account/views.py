@@ -26,6 +26,7 @@ from external_auth.login_and_register import (
     login as external_auth_login,
     register as external_auth_register
 )
+
 from student.models import UserProfile
 from student.views import (
     signin_user as old_login_view,

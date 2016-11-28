@@ -27,7 +27,8 @@ urlpatterns = (
     url(r'^dashboard$', 'student.views.dashboard', name="dashboard"),
     url(r'^login_ajax$', 'student.views.login_user', name="login"),
     url(r'^login_ajax/(?P<error>[^/]*)$', 'student.views.login_user'),
-
+    url(r'^bio/(?P<username>[\w.@+-]+)$', 'instructorbio.views.instructor',
+        name='instructor_bio',),
     url(r'^email_confirm/(?P<key>[^/]*)$', 'student.views.confirm_email_change'),
     url(r'^event$', 'track.views.user_track'),
     url(r'^performance$', 'performance.views.performance_log'),
@@ -345,6 +346,7 @@ urlpatterns += (
     url(r'^calculate$', 'util.views.calculate'),
 
     url(r'^courses/?$', 'branding.views.courses', name="courses"),
+    url(r'^organizations/?$', 'branding.views.organizations', name="organizations"),
     url(
         r'^change_enrollment$',
         'student.views.change_enrollment',
@@ -363,6 +365,12 @@ urlpatterns += (
         ),
         'courseware.views.course_about',
         name='about_course',
+    ),
+    #About organizations
+    url(
+        r'^organizations/(?P<organization_id>\d+)/$',
+        'courseware.views.organization_about',
+        name='about_organization',
     ),
 
     #Inside the course

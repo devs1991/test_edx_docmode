@@ -49,6 +49,7 @@ from courseware.courses import (
     get_courses,
     get_course,
     get_course_by_id,
+    get_course_ctype,
     get_permission_for_course_about,
     get_studio_url,
     get_course_overview_with_access,
@@ -156,6 +157,54 @@ def courses(request):
         "courseware/courses.html",
         {'courses': courses_list, 'course_discovery_meanings': course_discovery_meanings}
     )
+
+@ensure_csrf_cookie
+@cache_if_anonymous()
+def organizations(request):
+    """
+    Render "find courses" page.  The course selection work is done in courseware.courses.
+    """
+    from associations.associations import get_organizations
+    org_list = []
+    org_list = get_organizations()
+    course_discovery_meanings = getattr(settings, 'COURSE_DISCOVERY_MEANINGS', {})
+    
+    return render_to_response(
+        "associations/associations.html",
+        {'organizations': org_list, 'course_discovery_meanings': course_discovery_meanings}
+    )
+
+def ajaxform(request):
+    """
+    Render "find courses" page.  The course selection work is done in courseware.courses.
+    """
+    if request.method == 'POST':
+
+        usertype = request.POST['usertype']
+
+        return render_to_response("registration/reg_usertype.html",{'usertype':usertype})
+
+@ensure_csrf_cookie
+@cache_if_anonymous()
+def organization_about(request, organization_id):
+    """
+    Display the association's about page.
+    """
+    from organizations.models import Organization, OrganizationSlider
+
+    data = Organization.objects.get(id=organization_id)
+    images = []
+    images = OrganizationSlider.objects.get(organization=organization_id)
+
+    context = {
+        'association_id': data.id,
+        'assoc_name': data.name,
+        'assoc_short_name': data.short_name,
+        'assoc_description': data.description,
+        'images': images
+    }
+
+    return render_to_response('associations/association_about.html', context)
 
 
 def render_accordion(user, request, course, chapter, section, field_data_cache):
@@ -355,7 +404,7 @@ def index(request, course_id, chapter=None, section=None,
         course_id=course_key,
         registrationcoderedemption__redeemed_by=request.user
     )
-
+    
     # Redirect to dashboard if the course is blocked due to non-payment.
     if is_course_blocked(request, redeemed_registration_codes, course_key):
         # registration codes may be generated via Bulk Purchase Scenario
@@ -386,6 +435,7 @@ def _index_bulk_op(request, course_key, chapter, section, position):
             raise Http404(u"Position {} is not an integer!".format(position))
 
     course = get_course_with_access(request.user, 'load', course_key, depth=2)
+    
     staff_access = has_access(request.user, 'staff', course)
     masquerade, user = setup_masquerade(request, course_key, staff_access, reset_masquerade_data=True)
 
@@ -659,10 +709,12 @@ def course_info(request, course_id):
     Assumes the course_id is in a valid format.
     """
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    
+    
     with modulestore().bulk_operations(course_key):
         course = get_course_by_id(course_key, depth=2)
         access_response = has_access(request.user, 'load', course, course_key)
-
+        
         if not access_response:
 
             # The user doesn't have access to the course. If they're
